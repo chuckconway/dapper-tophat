@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Configurations>QA;Production;Development</Configurations>
+    <LangVersion>7.1</LangVersion>
+    <Platforms>AnyCPU</Platforms>
+    <AssemblyName>Dapper.TopHat</AssemblyName>
+    <RootNamespace>Dapper.TopHat</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Development|AnyCPU' ">
+    <IntermediateOutputPath>obj\Development</IntermediateOutputPath>
+    <DebugType>
+    </DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Development</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <NoWarn>
+    </NoWarn>
+    <LangVersion>Default</LangVersion>
+    <NoStdLib>false</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'QA|AnyCPU' ">
+    <IntermediateOutputPath>obj\QA</IntermediateOutputPath>
+    <DebugType>
+    </DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\QA</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <NoWarn>
+    </NoWarn>
+    <LangVersion>Default</LangVersion>
+    <NoStdLib>false</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Production|AnyCPU' ">
+    <IntermediateOutputPath>obj\Production</IntermediateOutputPath>
+    <DebugType>
+    </DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Production</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <NoWarn>
+    </NoWarn>
+    <LangVersion>Default</LangVersion>
+    <NoStdLib>false</NoStdLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+  </ItemGroup>
+</Project>
