@@ -1,0 +1,19 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.TopHat", "Dapper.TopHat.csproj", "{EA842FB8-8A96-4EE9-947E-721FAD02F793}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Any CPU = Development|Any CPU
+		Production|Any CPU = Production|Any CPU
+		QA|Any CPU = QA|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA842FB8-8A96-4EE9-947E-721FAD02F793}.Development|Any CPU.ActiveCfg = Development|Any CPU
+		{EA842FB8-8A96-4EE9-947E-721FAD02F793}.Development|Any CPU.Build.0 = Development|Any CPU
+		{EA842FB8-8A96-4EE9-947E-721FAD02F793}.Production|Any CPU.ActiveCfg = Production|Any CPU
+		{EA842FB8-8A96-4EE9-947E-721FAD02F793}.Production|Any CPU.Build.0 = Production|Any CPU
+		{EA842FB8-8A96-4EE9-947E-721FAD02F793}.QA|Any CPU.ActiveCfg = QA|Any CPU
+		{EA842FB8-8A96-4EE9-947E-721FAD02F793}.QA|Any CPU.Build.0 = QA|Any CPU
+	EndGlobalSection
+EndGlobal
