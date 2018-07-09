@@ -1,9 +1,9 @@
-﻿using System.Data.Common;
-
-namespace Dapper.TopHat
-{
-    public interface IConnectionFactory
-    {
-        DbConnection CreateConnection();
-    }
-}
+﻿//using System.Data.Common;
+//
+//namespace Dapper.TopHat
+//{
+//    public interface IConnectionFactory
+//    {
+//        DbConnection CreateConnection();
+//    }
+//}
