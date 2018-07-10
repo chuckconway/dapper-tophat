@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper.TopHat.Query;
 
 namespace Dapper.TopHat.Persistence
@@ -24,10 +25,22 @@ namespace Dapper.TopHat.Persistence
             }
         }
 
+        private async Task<int[]> ExecuteUpdatesAsync(IEnumerable<Persist> results)
+        {
+            IList<Task<int>> tasks = results.Select(ExecuteUpdateAsync).ToList();
+            return await Task.WhenAll(tasks);
+        }
+
         private void ExecuteUpdate(Persist persist)
         {
             var parameters = PopulateParameters(persist);
-            _connection.ExecuteAsync(persist.Sql, parameters);
+            _connection.Execute(persist.Sql, parameters);
+        }
+
+        private Task<int> ExecuteUpdateAsync(Persist persist)
+        {
+            var parameters = PopulateParameters(persist);
+            return _connection.ExecuteAsync(persist.Sql, parameters);
         }
 
         private static DynamicParameters PopulateParameters(Persist persist)
@@ -48,9 +61,15 @@ namespace Dapper.TopHat.Persistence
             return model;
         }
 
+        public async Task<TModel> UpdateAsync<TModel>(TModel model, IEnumerable<Persist> results) where TModel : class, new()
+        {
+            await ExecuteUpdatesAsync(results);
+            return model;
+        }
+
         public TModel Save<TModel>(TModel model, IEnumerable<Persist> results) where TModel : class, new()
         {
-            foreach (var persist in results)
+            foreach (var persist in   results)
             {
                 if (persist.HasPrimaryKeysPresent)
                 {
@@ -65,12 +84,39 @@ namespace Dapper.TopHat.Persistence
             return model;
         }
 
+        public async Task<TModel> SaveAsync<TModel>(TModel model, IEnumerable<Persist> results) where TModel : class, new()
+        {
+            foreach (var persist in results)
+            {
+                if (persist.HasPrimaryKeysPresent)
+                {
+                   await ExecuteUpdateAsync(persist);
+                }
+                else
+                {
+                   await InsertModelAsync(model, persist);
+                }
+            }
+
+            return model;
+        }
+
         private void InsertModel<TModel>(TModel model, Persist persist) where TModel : class, new()
         {
             var parameters = PopulateParameters(persist);
             
             var sql = persist.Sql + "; " + "SELECT SCOPE_IDENTITY();";
             var id = _connection.ExecuteScalar(sql, parameters);
+
+            SetPrimaryKey(model, id);
+        }
+
+        private async Task InsertModelAsync<TModel>(TModel model, Persist persist) where TModel : class, new()
+        {
+            var parameters = PopulateParameters(persist);
+
+            var sql = persist.Sql + "; " + "SELECT SCOPE_IDENTITY();";
+            var id = await _connection.ExecuteScalarAsync(sql, parameters);
 
             SetPrimaryKey(model, id);
         }

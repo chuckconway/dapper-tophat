@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using Dapper.TopHat.Persistence;
 using Dapper.TopHat.Query;
 
@@ -29,6 +30,27 @@ namespace Dapper.TopHat
             }
 
             return model;
+        }
+
+        public static async Task<TModel> SaveAsync<TModel>(this DbConnection connection, TModel model, Expression<Func<TModel, bool>> @where = null) where TModel : class, new()
+        {
+            ValidateAttributes(model);
+
+            IPersistence persistence = new Persistence.Persistence();
+            var saveService = new SaveModelService(connection);
+            var results = (where != null ? persistence.Persist(model, @where) : persistence.Persist<TModel>(model));
+            TModel saved;
+
+            if (where != null) // We know this is an update
+            {
+                saved = await saveService.UpdateAsync(model, results);
+            }
+            else // We don't know if this is an update or not and must check the primary keys
+            {
+                saved = await saveService.SaveAsync(model, results);
+            }
+
+            return saved;
         }
 
         private static void ValidateAttributes<TModel>(TModel model) where TModel : class, new()

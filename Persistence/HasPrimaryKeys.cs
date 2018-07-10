@@ -30,7 +30,15 @@ namespace Dapper.TopHat.Persistence
 
         private static Persist GetUpdate(Persist persist, IList<Property> primaryKeys)
         {
-            persist.Sql += " WHERE " + PrimaryKeysToSql.ConvertToSql(primaryKeys);
+            var conditions = PrimaryKeysToSql.ConvertToSql(primaryKeys);
+
+            persist.Sql += " WHERE " + conditions.Builder;
+
+            foreach (var parameter in conditions.Parameters)
+            {
+                persist.Parameters.Add(new QueryParameter {Name = parameter.Key, Value = parameter.Value});
+            }
+
             return persist;
         }
 
