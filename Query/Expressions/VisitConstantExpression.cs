@@ -6,8 +6,22 @@ namespace Dapper.TopHat.Query.Expressions
     {
         public object Visit(QueryBuilder state, ConstantExpression expression)
         {
-            //var values = new QuotifyValues();
-            return GetRightHandValue(state, i => expression.Value ?? "null");
+            var value = ConvertBooleanToSqlServerValues(expression.Value);
+            
+            return GetRightHandValue(state, i => value ?? "null");
+        }
+
+        private static object ConvertBooleanToSqlServerValues(object value)
+        {
+            if (value is bool v)
+            {
+                const int trueValue = 1;
+                const int falseValue = 0;
+                
+                return (v ? trueValue : falseValue);
+            }
+
+            return value;
         }
     }
 }

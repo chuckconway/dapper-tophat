@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -217,6 +218,7 @@ namespace Dapper.TopHat.Query
             var queryBuilder = _queryWriter.Query<T>();
             var parameters = GetParameters(queryBuilder);
             var query = new InternalQuery {Sql = queryBuilder.Builder.ToString(), Parameters = parameters};
+            Console.WriteLine(query.Sql);
             return query;
         }
 
