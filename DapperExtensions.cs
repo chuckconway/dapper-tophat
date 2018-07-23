@@ -12,12 +12,12 @@ namespace Dapper.TopHat
 {
     public static class DapperExtensions
     {
-        public static TModel Save<TModel>(this DbConnection connection, TModel model, Expression<Func<TModel, bool>> @where = null) where TModel : class, new()
+        public static TModel Save<TModel>(this DbConnection connection, TModel model, Expression<Func<TModel, bool>> @where = null, DbTransaction transaction = null) where TModel : class, new()
         {
             ValidateAttributes(model);
 
             IPersistence persistence = new Persistence.Persistence();
-            var saveService = new SaveModelService(connection);
+            var saveService = new SaveModelService(connection, transaction);
             var results = (where != null ? persistence.Persist(model, @where) : persistence.Persist<TModel>(model));
 
             if (where != null) // We know this is an update
@@ -32,12 +32,12 @@ namespace Dapper.TopHat
             return model;
         }
 
-        public static async Task<TModel> SaveAsync<TModel>(this DbConnection connection, TModel model, Expression<Func<TModel, bool>> @where = null) where TModel : class, new()
+        public static async Task<TModel> SaveAsync<TModel>(this DbConnection connection, TModel model, Expression<Func<TModel, bool>> @where = null, DbTransaction transaction = null) where TModel : class, new()
         {
             ValidateAttributes(model);
 
             IPersistence persistence = new Persistence.Persistence();
-            var saveService = new SaveModelService(connection);
+            var saveService = new SaveModelService(connection, transaction);
             var results = (where != null ? persistence.Persist(model, @where) : persistence.Persist<TModel>(model));
             TModel saved;
 
@@ -71,14 +71,14 @@ namespace Dapper.TopHat
             }
         }
 
-        public static IQuery<TModel> Where<TModel>(this DbConnection connection, Expression<Func<TModel, bool>> @where) where TModel : class, new ()
+        public static IQuery<TModel> Where<TModel>(this DbConnection connection, Expression<Func<TModel, bool>> @where, DbTransaction transaction = null) where TModel : class, new ()
         {
-            return new Query<TModel>(connection, new QueryWriter()).Where(@where);
+            return new Query<TModel>(connection, new QueryWriter(), transaction).Where(@where);
         }
 
-        public static IQuery<TModel> All<TModel>(this DbConnection connection) where TModel : class, new()
+        public static IQuery<TModel> All<TModel>(this DbConnection connection, DbTransaction transaction = null) where TModel : class, new()
         {
-            return new Query<TModel>(connection, new QueryWriter());
+            return new Query<TModel>(connection, new QueryWriter(), transaction);
         }
     }
 }

@@ -11,10 +11,12 @@ namespace Dapper.TopHat.Persistence
     public class SaveModelService
     {
         private readonly DbConnection _connection;
+        private readonly DbTransaction _transaction;
 
-        public SaveModelService(DbConnection connection)
+        public SaveModelService(DbConnection connection, DbTransaction transaction)
         {
             _connection = connection;
+            _transaction = transaction;
         }
 
         private void ExecuteUpdates(IEnumerable<Persist> results)
@@ -34,13 +36,13 @@ namespace Dapper.TopHat.Persistence
         private void ExecuteUpdate(Persist persist)
         {
             var parameters = PopulateParameters(persist);
-            _connection.Execute(persist.Sql, parameters);
+            _connection.Execute(persist.Sql, parameters, transaction:_transaction);
         }
 
         private Task<int> ExecuteUpdateAsync(Persist persist)
         {
             var parameters = PopulateParameters(persist);
-            return _connection.ExecuteAsync(persist.Sql, parameters);
+            return _connection.ExecuteAsync(persist.Sql, parameters, transaction:_transaction);
         }
 
         private static DynamicParameters PopulateParameters(Persist persist)
@@ -106,7 +108,7 @@ namespace Dapper.TopHat.Persistence
             var parameters = PopulateParameters(persist);
             
             var sql = persist.Sql + "; " + "SELECT SCOPE_IDENTITY();";
-            var id = _connection.ExecuteScalar(sql, parameters);
+            var id = _connection.ExecuteScalar(sql, parameters, transaction:_transaction);
 
             SetPrimaryKey(model, id);
         }
@@ -116,7 +118,7 @@ namespace Dapper.TopHat.Persistence
             var parameters = PopulateParameters(persist);
 
             var sql = persist.Sql + "; " + "SELECT SCOPE_IDENTITY();";
-            var id = await _connection.ExecuteScalarAsync(sql, parameters);
+            var id = await _connection.ExecuteScalarAsync(sql, parameters, transaction: _transaction);
 
             SetPrimaryKey(model, id);
         }

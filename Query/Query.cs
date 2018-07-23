@@ -15,11 +15,13 @@ namespace Dapper.TopHat.Query
     {
         private readonly DbConnection _connection;
         private readonly IQueryWriter _queryWriter;
+        private readonly DbTransaction _transaction;
 
-        public Query(DbConnection connection, IQueryWriter queryWriter)
+        public Query(DbConnection connection, IQueryWriter queryWriter, DbTransaction transaction)
         {
             _connection = connection;
             _queryWriter = queryWriter;
+            _transaction = transaction;
 
 
             //Clear out older queries if Hypersonic is used as a Singleton.
@@ -153,49 +155,49 @@ namespace Dapper.TopHat.Query
         public T Single()
         {
             var query = GetInternalQuery();
-            return _connection.QuerySingle<T>(query.Sql, param: query.Parameters);
+            return _connection.QuerySingle<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public Task<T> SingleAsync()
         {
             var query = GetInternalQuery();
-            return _connection.QuerySingleAsync<T>(query.Sql, param: query.Parameters);
+            return _connection.QuerySingleAsync<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public T SingleOrDefault()
         {
             var query = GetInternalQuery();
-            return _connection.QuerySingleOrDefault<T>(query.Sql, param: query.Parameters);
+            return _connection.QuerySingleOrDefault<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public Task<T> SingleOrDefaultAsync()
         {
             var query = GetInternalQuery();
-            return _connection.QuerySingleOrDefaultAsync<T>(query.Sql, param: query.Parameters);
+            return _connection.QuerySingleOrDefaultAsync<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public T First()
         {
             var query = GetInternalQuery();
-            return _connection.QueryFirst<T>(query.Sql, param: query.Parameters);
+            return _connection.QueryFirst<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public Task<T> FirstAsync()
         {
             var query = GetInternalQuery();
-            return _connection.QueryFirstAsync<T>(query.Sql, param: query.Parameters);
+            return _connection.QueryFirstAsync<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public T FirstOrDefault()
         {
             var query = GetInternalQuery();
-            return _connection.QueryFirstOrDefault<T>(query.Sql, param: query.Parameters);
+            return _connection.QueryFirstOrDefault<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public Task<T> FirstOrDefaultAsync()
         {
             var query = GetInternalQuery();
-            return _connection.QueryFirstOrDefaultAsync<T>(query.Sql, param: query.Parameters);
+            return _connection.QueryFirstOrDefaultAsync<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         /// <summary>   Gets the list. </summary>
@@ -204,13 +206,13 @@ namespace Dapper.TopHat.Query
         public IEnumerable<T> ToEnumerable()
         {
             var query = GetInternalQuery();
-            return _connection.Query<T>(query.Sql, param: query.Parameters);
+            return _connection.Query<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         public Task<IEnumerable<T>> ToEnumerableAsync()
         {
             var query = GetInternalQuery();
-            return _connection.QueryAsync<T>(query.Sql, param: query.Parameters);
+            return _connection.QueryAsync<T>(query.Sql, param: query.Parameters, transaction:_transaction);
         }
 
         private InternalQuery GetInternalQuery()
